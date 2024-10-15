@@ -25,10 +25,12 @@ tasks:
     postgresql_table:
       table: clients
       rename: customers
+
   - name: set Owner to someuser
     postgresql_table:
       name: clients
       owner: Amir
+      
   - name: truncate table customers
     postgresql_table:
       name: clients
