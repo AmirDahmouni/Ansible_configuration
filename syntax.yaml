@@ -1,0 +1,35 @@
+hosts: webservers
+remote_user: root
+
+tasks:
+  - name: create directory for nginx
+    file:
+      path: /data/ngixn/dir
+      state: directory
+
+  - name: insyall nginx latest version
+    yum:
+      name: nginx
+      state: latest
+
+  - name: start nginx
+    service:
+      name: nginx
+      state: started
+
+hosts: databases
+remote_user: root
+
+tasks:
+  - name: rename table
+    postgresql_table:
+      table: clients
+      rename: customers
+  - name: set Owner to someuser
+    postgresql_table:
+      name: clients
+      owner: Amir
+  - name: truncate table customers
+    postgresql_table:
+      name: clients
+      truncate: yes
