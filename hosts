@@ -1,5 +1,14 @@
 [webservers]
-134.122.92.122
+134.122.92.122 ansible_ssh_key=~/.ssh/id_rsa_webserver ansible_user=root
 
 [databases]
-35.180.25.170
+35.180.25.170 ansible_ssh_key=~/.ssh/id_rsa_databases ansible_user=root
+
+[ec2]
+ec2-15-188-236-5.eu-west-3.comute.amzonaws.com
+ec2-35-180-204-130.eu-west-3.comute.amzonaws.com ansible_python_interpreter=/usr/bin/python3
+[ec2:vars]
+ansible_ssh_private_key=~/Download/ansible.pem  #ansible downloaded when we create ec2 instances
+ansible_user=root
+
+# ansible ec2 -i hosts -m ping
