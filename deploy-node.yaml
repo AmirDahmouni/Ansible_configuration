@@ -18,31 +18,31 @@
   tasks:
     - name: Create linux user
       ansible.builtin.user:
-        name: "{{linux_name}}"
-        comment: Node User
+        name: "{{ linux_name }}"
+        comment: Node User  ## description
         group: admin
 
 - name: Deploy nodejs app
   hosts: webservers
-  become: True
-  become_user: "{{linux_name}}"
+  become: True   ## enable changing user
+  become_user: "{{ linux_name }}"  ## switch to user
   vars_files:
     - nodejs-vars
   tasks:
     - name: Unpack the nodejs file
       ansible.builtin.unarchive:
-        src: "{{location}}/weather-api.tgz"
-        dest: "{{user_home_dir}}"
+        src: "{{ location }}/{{ project_name }}.tgz"
+        dest: "{{ user_home_dir }}/{{ project_name }}"
     - name: Install dependencies
       community.general.npm:
-        path: "{{user_home_dir}}/package"
+        path: "{{ user_home_dir }}/{{ project_name }}"
     - name: Start the application
       ansible.builtin.command:
-        chdir: "{{user_home_dir}}/package"
+        chdir: "{{ user_home_dir }}/{{ project_name }}"
         cmd: node index
       async: 1000  # execute command in background for any task
       poll: 0
     - name: Ensure app is running
       ansible.builtin.shell: ps aux | grep node
       register: app_status    # registring the result into variable app_status for any task
-    - ansible.builtin.debug: msg={{app_status.stdout_lines}}
+    - ansible.builtin.debug: msg={{ app_status.stdout_lines }}

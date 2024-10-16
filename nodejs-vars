@@ -1,6 +1,7 @@
 # deploy-node.yaml
 version: 1.0.0
-location: /Users/Amir/weather-api
+location: /Users/Amir/
+project_name: weather-api
 linux_name: amir
 user_home_dir: /home/{{linux_name}}
 
