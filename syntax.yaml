@@ -10,8 +10,8 @@
         path: /data/ngixn/dir
         state: directory
 
-    - name: insyall {{ servername }} latest version
-      yum:
+    - name: install {{ servername }} latest version
+      apt:
         name: {{ servername }}
         state: latest
 
@@ -19,6 +19,16 @@
       service:
         name: {{ servername }}
         state: started
+
+    - name: stop {{ servername }}
+      service:
+        name: {{ servername }}
+        state: stop
+
+    - name: uninstall {{ servername }} latest version
+      apt:
+        name: {{ servername }}
+        state: stoped
 
 - hosts: databases
   remote_user: root
@@ -38,3 +48,6 @@
       postgresql_table:
         name: clients
         truncate: yes
+
+
+#ansible-playbook -i hosts syntax.yaml

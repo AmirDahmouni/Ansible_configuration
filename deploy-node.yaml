@@ -1,0 +1,48 @@
+---
+- name: Install node and npm
+  hosts: webservers
+  tasks:
+    - name: Update apt repo and cache
+      ansible.builtin.apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+    - name: Install nodejs and npm
+      ansible.builtin.apt:
+        pkg:
+          - nodejs
+          - npm
+
+
+- name: Create new linux user for node app
+  hosts: webservers
+  vars_files:
+    - nodejs-vars
+  tasks:
+    - name: Create linux user
+      ansible.builtin.user:
+        name: "{{linux_name}}"
+        comment: Node User
+        group: admin
+
+- name: Deploy nodejs app
+  hosts: webservers
+  become: True
+  become_user: "{{linux_name}}"
+  vars_files:
+    - nodejs-vars
+  tasks:
+    - name: Unpack the nodejs file
+      ansible.builtin.unarchive:
+        src: "{{location}}/weather-api.tgz"
+        dest: "{{user_home_dir}}"
+    - name: Install dependencies
+      community.general.npm:
+        path: "{{user_home_dir}}/package"
+    - name: Start the application
+      ansible.builtin.command:
+        chdir: "{{user_home_dir}}/package"
+        cmd: node index
+      async: 1000  # execute command in background for any task
+      poll: 0
+    - name: Ensure app is running
+      ansible.builtin.shell: ps aux | grep node
+      register: app_status    # registring the result into variable app_status for any task
+    - ansible.builtin.debug: msg={{app_status.stdout_lines}}
