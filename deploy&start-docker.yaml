@@ -27,3 +27,35 @@
         name:
           - docker
           - docker-compose
+
+- name: Add {{ linux_name }} to docker group
+  hosts: docker_server
+  become: yes
+  tasks:
+    - name: Add {{ linux_name }} to docker group
+      ansible.builtin.user:
+        name: {{ linux_name }}
+        groups: docker
+        append: yes
+    - name: Reconnect to server session
+      ansible.builtin.meta: reset_connection
+
+
+- name: Start docker containers
+  hosts: docker_server
+  vars_files:
+    - nodejs-vars
+  tasks:
+    - name: Copy docker compose
+      ansible.builtin.copy:
+        src: /Users/{{ linux_name }}docker-compose.yaml
+        dest: /home/{{ linux_name }}/docker-compose.yaml
+    - name: Docker login
+      community.docker.docker_login:
+        registry_url: https://index.docker.io/v1/
+        username: {{ linux_name }}
+        password: "{{ docker_password }}"
+    - name: Start container from compose
+      community.docker.docker_compose:
+        project_src: /home/{{ linux_name }}
+
