@@ -7,6 +7,9 @@
 [nexus_server]
 135.1.25.170 ansible_ssh_key=~/.ssh/id_rsa_databases ansible_user=root
 
+[docker_server]
+ec2-15-188-236-5.eu-west-3.comute.amzonaws.com ansible_ssh_private_key=~/Download/id_rsa
+
 [ec2]
 ec2-15-188-236-5.eu-west-3.comute.amzonaws.com
 ec2-35-180-204-130.eu-west-3.comute.amzonaws.com ansible_python_interpreter=/usr/bin/python3
